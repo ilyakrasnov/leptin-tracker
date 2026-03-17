@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Leptin Reset — 13 Weeks</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f0d;
+    --bg2: #1a1a16;
+    --bg3: #232320;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede6;
+    --text2: #9e9b92;
+    --text3: #6a6860;
+    --green: #7db87a;
+    --green-dim: #3a5c38;
+    --green-bg: #1a2e19;
+    --amber: #c9a84c;
+    --amber-bg: #2a2212;
+    --red: #c97a7a;
+    --accent: #8fbe8c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    max-width: 480px;
+    margin: 0 auto;
+    padding-bottom: 100px;
+  }
+
+  /* NAV */
+  .nav {
+    position: fixed;
+    bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 100%; max-width: 480px;
+    background: rgba(15,15,13,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .nav-btn {
+    flex: 1; padding: 14px 8px 12px;
+    background: none; border: none; color: var(--text3);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; font-weight: 400; letter-spacing: 0.06em;
+    text-transform: uppercase; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    transition: color 0.2s;
+  }
+  .nav-btn.active { color: var(--accent); }
+  .nav-icon { font-size: 18px; line-height: 1; }
+
+  /* HEADER */
+  .header {
+    padding: 52px 24px 24px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .header-eyebrow {
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 6px;
+  }
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px; line-height: 1.1; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .header-title em { color: var(--accent); font-style: italic; }
+  .header-sub { font-size: 14px; color: var(--text2); }
+
+  /* PROGRESS RING */
+  .progress-section {
+    padding: 28px 24px 20px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  .ring-wrap { position: relative; flex-shrink: 0; }
+  .ring-label {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .ring-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--text); line-height: 1;
+  }
+  .ring-of { font-size: 10px; color: var(--text3); letter-spacing: 0.05em; }
+  .progress-meta { flex: 1; }
+  .progress-meta h3 { font-size: 16px; font-weight: 500; margin-bottom: 4px; }
+  .progress-meta p { font-size: 13px; color: var(--text2); line-height: 1.5; }
+  .week-badge {
+    display: inline-block; margin-top: 8px;
+    background: var(--green-bg); border: 0.5px solid var(--green-dim);
+    color: var(--green); font-size: 11px; letter-spacing: 0.05em;
+    padding: 3px 10px; border-radius: 20px;
+  }
+
+  /* SECTION TITLE */
+  .section-title {
+    padding: 20px 24px 10px;
+    font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--text3);
+  }
+
+  /* WEEK CARDS */
+  .week-list { padding: 0 16px; }
+  .week-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .week-card.current { border-color: var(--green-dim); }
+  .week-card.done { border-color: rgba(125,184,122,0.2); }
+
+  .week-head {
+    padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px;
+    cursor: pointer; user-select: none;
+  }
+  .week-circle {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 500; flex-shrink: 0;
+    border: 1px solid var(--border2);
+    background: var(--bg3); color: var(--text2);
+    transition: all 0.2s;
+  }
+  .week-card.done .week-circle { background: var(--green-bg); border-color: var(--green-dim); color: var(--green); }
+  .week-card.current .week-circle { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+  .week-card.locked .week-circle { opacity: 0.4; }
+
+  .week-info { flex: 1; min-width: 0; }
+  .week-name { font-size: 14px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .week-card.locked .week-name { color: var(--text3); }
+  .week-status { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .week-card.current .week-status { color: var(--green); }
+
+  .week-chevron { color: var(--text3); font-size: 12px; transition: transform 0.2s; }
+  .week-card.open .week-chevron { transform: rotate(90deg); }
+  .week-card.locked .week-chevron { opacity: 0.3; }
+
+  .week-body {
+    display: none; padding: 0 16px 16px;
+    border-top: 0.5px solid var(--border);
+    padding-top: 14px;
+  }
+  .week-card.open .week-body { display: block; }
+
+  .habit-desc {
+    font-size: 14px; color: var(--text2); line-height: 1.65;
+    margin-bottom: 14px;
+  }
+
+  /* DAILY CHECK */
+  .daily-title {
+    font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: 10px;
+  }
+  .days-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;
+    margin-bottom: 14px;
+  }
+  .day-btn {
+    aspect-ratio: 1; border-radius: 8px;
+    background: var(--bg3); border: 0.5px solid var(--border);
+    color: var(--text3); font-size: 11px; font-weight: 500;
+    cursor: pointer; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 2px;
+    transition: all 0.15s;
+  }
+  .day-btn.checked { background: var(--green-bg); border-color: var(--green-dim); color: var(--green); }
+  .day-btn .day-label { font-size: 9px; color: inherit; opacity: 0.7; }
+
+  .complete-btn {
+    width: 100%; padding: 11px;
+    background: var(--green-bg); border: 0.5px solid var(--green-dim);
+    color: var(--green); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    letter-spacing: 0.03em; cursor: pointer; transition: all 0.2s;
+  }
+  .complete-btn:hover { background: var(--green-dim); }
+  .complete-btn.week-done-btn {
+    background: var(--bg3); border-color: var(--border);
+    color: var(--text2);
+  }
+  .complete-btn.unlock-btn {
+    background: var(--amber-bg); border-color: rgba(201,168,76,0.3);
+    color: var(--amber);
+  }
+
+  /* FOODS TAB */
+  .foods-wrap { padding: 0 16px; }
+  .food-category {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 14px; margin-bottom: 8px; overflow: hidden;
+  }
+  .food-cat-head {
+    padding: 14px 16px; display: flex; align-items: center; gap: 10px;
+    cursor: pointer; user-select: none;
+  }
+  .food-cat-icon { font-size: 18px; }
+  .food-cat-name { flex: 1; font-size: 15px; font-weight: 500; }
+  .food-cat-count { font-size: 12px; color: var(--text3); }
+  .food-cat-chevron { color: var(--text3); font-size: 12px; transition: transform 0.2s; }
+  .food-category.open .food-cat-chevron { transform: rotate(90deg); }
+
+  .food-items { display: none; border-top: 0.5px solid var(--border); }
+  .food-category.open .food-items { display: block; }
+  .food-item {
+    padding: 11px 16px; display: flex; align-items: center; gap: 10px;
+    border-bottom: 0.5px solid var(--border); cursor: pointer;
+    transition: background 0.15s;
+  }
+  .food-item:last-child { border-bottom: none; }
+  .food-item:hover { background: var(--bg3); }
+  .food-item-name { flex: 1; font-size: 14px; color: var(--text); }
+  .food-item-note { font-size: 12px; color: var(--text3); }
+  .food-check {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1px solid var(--border2); background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: transparent; flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .food-item.faved .food-check { background: var(--green-bg); border-color: var(--green-dim); color: var(--green); }
+
+  /* STATS TAB */
+  .stats-wrap { padding: 0 16px; }
+  .stat-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .stat-card {
+    background: var(--bg2); border: 0.5px solid var(--border);
+    border-radius: 14px; padding: 16px;
+  }
+  .stat-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px; color: var(--text); line-height: 1;
+    margin-bottom: 4px;
+  }
+  .stat-label { font-size: 12px; color: var(--text3); }
+  .streak-card {
+    background: var(--green-bg); border: 0.5px solid var(--green-dim);
+    border-radius: 14px; padding: 16px; margin-bottom: 8px;
+  }
+  .streak-card .stat-num { color: var(--green); }
+  .streak-card .stat-label { color: var(--green); opacity: 0.7; }
+
+  .reset-btn {
+    width: 100%; margin-top: 24px; padding: 13px;
+    background: none; border: 0.5px solid rgba(201,122,122,0.3);
+    color: var(--red); border-radius: 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    cursor: pointer;
+  }
+
+  /* PAGE VISIBILITY */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .page.active > * { animation: fadeUp 0.25s ease both; }
+  .page.active > *:nth-child(2) { animation-delay: 0.04s; }
+  .page.active > *:nth-child(3) { animation-delay: 0.08s; }
+  .page.active > *:nth-child(4) { animation-delay: 0.12s; }
+
+  .checkmark-pop {
+    animation: pop 0.2s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showPage('weeks')" id="nav-weeks">
+    <span class="nav-icon">◎</span>
+    Weeks
+  </button>
+  <button class="nav-btn" onclick="showPage('foods')" id="nav-foods">
+    <span class="nav-icon">◈</span>
+    Foods
+  </button>
+  <button class="nav-btn" onclick="showPage('stats')" id="nav-stats">
+    <span class="nav-icon">◇</span>
+    Stats
+  </button>
+</nav>
+
+<!-- WEEKS PAGE -->
+<div class="page active" id="page-weeks">
+  <div class="header">
+    <div class="header-eyebrow">Leptin Reset</div>
+    <div class="header-title">13 <em>Weeks</em></div>
+    <div class="header-sub">One habit. Every week. For good.</div>
+  </div>
+
+  <div class="progress-section">
+    <div class="ring-wrap">
+      <svg width="80" height="80" viewBox="0 0 80 80">
+        <circle cx="40" cy="40" r="32" fill="none" stroke="#232320" stroke-width="5"/>
+        <circle cx="40" cy="40" r="32" fill="none" stroke="#7db87a" stroke-width="5"
+          stroke-linecap="round"
+          stroke-dasharray="201"
+          stroke-dashoffset="201"
+          transform="rotate(-90 40 40)"
+          id="progress-ring"/>
+      </svg>
+      <div class="ring-label">
+        <div class="ring-num" id="ring-num">0</div>
+        <div class="ring-of">of 13</div>
+      </div>
+    </div>
+    <div class="progress-meta">
+      <h3 id="progress-title">Ready to start</h3>
+      <p id="progress-desc" style="font-size:13px;color:var(--text2);line-height:1.5">Begin with Week 1 and add one habit each week.</p>
+      <div class="week-badge" id="current-week-badge">Week 1 active</div>
+    </div>
+  </div>
+
+  <div class="section-title">Your weeks</div>
+  <div class="week-list" id="week-list"></div>
+</div>
+
+<!-- FOODS PAGE -->
+<div class="page" id="page-foods">
+  <div class="header">
+    <div class="header-eyebrow">Food Toolkit</div>
+    <div class="header-title">Your <em>Foods</em></div>
+    <div class="header-sub">Mark what you use regularly</div>
+  </div>
+  <div class="section-title">Categories</div>
+  <div class="foods-wrap" id="foods-wrap"></div>
+</div>
+
+<!-- STATS PAGE -->
+<div class="page" id="page-stats">
+  <div class="header">
+    <div class="header-eyebrow">Overview</div>
+    <div class="header-title">Your <em>Progress</em></div>
+    <div class="header-sub">How you're doing</div>
+  </div>
+  <div class="stats-wrap">
+    <div class="streak-card">
+      <div class="stat-num" id="stat-streak">0</div>
+      <div class="stat-label">🔥 day streak</div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-weeks-done">0</div>
+        <div class="stat-label">weeks completed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-days-checked">0</div>
+        <div class="stat-label">days checked in</div>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-foods-faved">0</div>
+        <div class="stat-label">foods marked</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-weeks-left">13</div>
+        <div class="stat-label">weeks remaining</div>
+      </div>
+    </div>
+    <button class="reset-btn" onclick="confirmReset()">Reset all progress</button>
+  </div>
+</div>
+
+<script>
+const WEEKS = [
+  { title: "Water before meals", desc: "Drink 2 glasses of water 15–20 minutes before each meal. Stretches the stomach slightly and pre-activates satiety signals before food arrives." },
+  { title: "Vegetables equal in volume", desc: "Add vegetables to every meal in a volume equal to the rest of the food. Don't remove anything — just add. Increases meal volume with low caloric density, triggering leptin release." },
+  { title: "Eat slowly — 20 min minimum", desc: "Put down your fork between bites. Leptin signals take 15–20 minutes to travel from the gut to the brain. Rushing a meal means you always overshoot satiety." },
+  { title: "Stop at 80% full", desc: "Eat until you feel satisfied, not full. Learn to recognize the difference. This is the core leptin skill — listening to the signal before it becomes a shout." },
+  { title: "Protein at every meal", desc: "Include a protein source at every meal: eggs, chicken, fish, legumes, cottage cheese, yogurt. Protein suppresses ghrelin (the hunger hormone) more than any other macronutrient." },
+  { title: "No eating 3h before sleep", desc: "Finish eating at least 3 hours before bed. Late-night eating spikes insulin at the worst hormonal moment, directly interfering with overnight leptin sensitivity restoration." },
+  { title: "Consistent meal timing", desc: "Eat at roughly the same times each day. Hormonal cycles are circadian — predictable meal timing helps calibrate hunger signals and reduce random cravings." },
+  { title: "Eliminate liquid calories", desc: "No sugary drinks, juices, or sweetened coffee/tea. Liquids bypass satiety signaling almost entirely — your gut doesn't register them as food, so leptin never fires." },
+  { title: "Eat without screens", desc: "No phone, TV, or computer during meals. Distracted eating disconnects you from satiety cues — you finish the plate on autopilot, not on hunger." },
+  { title: "One free meal per week", desc: "Intentionally eat whatever you want once a week, consciously and without guilt. Prevents psychological restriction cycles and briefly spikes leptin, which can reset sensitivity after a plateau." },
+  { title: "Reduce ultra-processed food", desc: "Swap one ultra-processed item per day for a whole-food equivalent. Not elimination — reduction. Ultra-processed foods are engineered to bypass leptin signaling entirely." },
+  { title: "Weekly review habit", desc: "Every Sunday, spend 5 minutes reviewing the week: which habits held, which slipped, what was hard. Builds meta-awareness that sustains the system long-term." },
+  { title: "Audit & lock in", desc: "No new habit this week. Identify the 2–3 habits that still feel effortful and reinforce only those. You exit with a personal maintenance map." }
+];
+
+const FOODS = [
+  {
+    icon: "🥩", name: "Proteins", items: [
+      { name: "Eggs", note: "whole, any style" },
+      { name: "Chicken breast", note: "lean" },
+      { name: "Chicken thigh", note: "more fat, more flavor" },
+      { name: "Ground beef (lean)", note: "80/20 or leaner" },
+      { name: "Salmon", note: "rich in omega-3" },
+      { name: "Tuna (canned)", note: "in water" },
+      { name: "Sardines", note: "in olive oil or water" },
+      { name: "Cottage cheese", note: "5% or 9%" },
+      { name: "Yellow cheese", note: "in moderation" },
+      { name: "Greek yogurt", note: "full fat, unsweetened" },
+      { name: "Lentils", note: "protein + fiber" },
+      { name: "Chickpeas", note: "cooked or canned" },
+      { name: "Black beans", note: "cooked" },
+      { name: "Tofu", note: "firm" },
+      { name: "Tehina (tahini)", note: "pure, unsweetened" }
+    ]
+  },
+  {
+    icon: "🥦", name: "Vegetables", items: [
+      { name: "Broccoli", note: "★ high satiety" },
+      { name: "Cauliflower", note: "★ versatile" },
+      { name: "Spinach", note: "raw or cooked" },
+      { name: "Kale", note: "cooked better" },
+      { name: "Cucumber", note: "great volume food" },
+      { name: "Zucchini", note: "low calorie density" },
+      { name: "Bell peppers", note: "all colors" },
+      { name: "Tomatoes", note: "fresh" },
+      { name: "Cabbage", note: "red or green" },
+      { name: "Eggplant", note: "roasted" },
+      { name: "Green beans", note: "fresh or frozen" },
+      { name: "Asparagus", note: "prebiotic fiber" },
+      { name: "Mushrooms", note: "any variety" },
+      { name: "Carrots", note: "in moderation" },
+      { name: "Onion & garlic", note: "flavor base" }
+    ]
+  },
+  {
+    icon: "🥑", name: "Healthy Fats", items: [
+      { name: "Avocado", note: "½ per meal" },
+      { name: "Olive oil (extra virgin)", note: "cold press" },
+      { name: "Almonds", note: "small handful" },
+      { name: "Walnuts", note: "omega-3 rich" },
+      { name: "Cashews", note: "in moderation" },
+      { name: "Sunflower seeds", note: "unsalted" },
+      { name: "Pumpkin seeds", note: "great snack" },
+      { name: "Flaxseeds (ground)", note: "add to anything" },
+      { name: "Coconut oil", note: "for cooking" }
+    ]
+  },
+  {
+    icon: "🌾", name: "Smart Carbs", items: [
+      { name: "Sweet potato", note: "roasted" },
+      { name: "Oats (rolled)", note: "not instant" },
+      { name: "Brown rice", note: "over white" },
+      { name: "Quinoa", note: "complete protein" },
+      { name: "Whole wheat bread", note: "sourdough best" },
+      { name: "Buckwheat", note: "underrated grain" },
+      { name: "Corn (whole)", note: "not processed" },
+      { name: "Lentil pasta", note: "high protein" }
+    ]
+  },
+  {
+    icon: "🍎", name: "Fruits", items: [
+      { name: "Berries (any)", note: "★ low sugar, high fiber" },
+      { name: "Apple", note: "with skin" },
+      { name: "Pear", note: "high fiber" },
+      { name: "Grapefruit", note: "leptin-friendly" },
+      { name: "Orange", note: "whole, not juice" },
+      { name: "Watermelon", note: "in moderation" },
+      { name: "Banana", note: "slightly unripe" },
+      { name: "Kiwi", note: "great before bed" }
+    ]
+  },
+  {
+    icon: "🧴", name: "Drinks", items: [
+      { name: "Water", note: "minimum 8 glasses/day" },
+      { name: "Sparkling water", note: "plain" },
+      { name: "Black coffee", note: "no sugar" },
+      { name: "Green tea", note: "supports metabolism" },
+      { name: "Herbal tea", note: "any" },
+      { name: "Lemon water", note: "morning ritual" }
+    ]
+  }
+];
+
+// STATE
+let state = loadState();
+
+function loadState() {
+  try {
+    return JSON.parse(localStorage.getItem('leptin_state')) || defaultState();
+  } catch(e) { return defaultState(); }
+}
+
+function defaultState() {
+  return {
+    currentWeek: 1,
+    completedWeeks: [],
+    dailyChecks: {}, // "week_W_day_D": true
+    favFoods: {},    // "cat_item": true
+    startDate: null,
+    lastCheckDate: null,
+    streak: 0
+  };
+}
+
+function saveState() {
+  localStorage.setItem('leptin_state', JSON.stringify(state));
+}
+
+// RENDER WEEKS
+function renderWeeks() {
+  const list = document.getElementById('week-list');
+  list.innerHTML = '';
+
+  WEEKS.forEach((week, i) => {
+    const wNum = i + 1;
+    const isDone = state.completedWeeks.includes(wNum);
+    const isCurrent = wNum === state.currentWeek;
+    const isLocked = wNum > state.currentWeek;
+
+    const card = document.createElement('div');
+    card.className = 'week-card' + (isDone ? ' done' : '') + (isCurrent ? ' current' : '') + (isLocked ? ' locked' : '');
+    card.id = 'week-' + wNum;
+
+    const checksThisWeek = countChecks(wNum);
+    let statusText = isLocked ? 'locked' : (isDone ? 'completed ✓' : (isCurrent ? `${checksThisWeek}/7 days` : 'upcoming'));
+
+    card.innerHTML = `
+      <div class="week-head" onclick="toggleWeek(${wNum}, event)">
+        <div class="week-circle">${isDone ? '✓' : wNum}</div>
+        <div class="week-info">
+          <div class="week-name">${week.title}</div>
+          <div class="week-status">${statusText}</div>
+        </div>
+        <div class="week-chevron">›</div>
+      </div>
+      <div class="week-body">
+        <p class="habit-desc">${week.desc}</p>
+        ${!isLocked ? renderDailyChecks(wNum, isDone) : ''}
+        ${isCurrent ? `<button class="complete-btn unlock-btn" onclick="completeWeek(${wNum})">Mark week as complete →</button>` : ''}
+        ${isDone ? `<button class="complete-btn week-done-btn" disabled>Week completed ✓</button>` : ''}
+      </div>
+    `;
+    list.appendChild(card);
+  });
+
+  updateProgressRing();
+}
+
+function renderDailyChecks(wNum, isDone) {
+  const days = ['M','T','W','T','F','S','S'];
+  let html = `<div class="daily-title">Daily check-in</div><div class="days-grid">`;
+  for (let d = 1; d <= 7; d++) {
+    const key = `w${wNum}_d${d}`;
+    const checked = state.dailyChecks[key];
+    html += `<button class="day-btn ${checked ? 'checked' : ''}" onclick="toggleDay(${wNum}, ${d}, this)">
+      ${checked ? '✓' : d}
+      <span class="day-label">${days[d-1]}</span>
+    </button>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function toggleWeek(wNum, e) {
+  if (wNum > state.currentWeek) return;
+  const card = document.getElementById('week-' + wNum);
+  const isOpen = card.classList.contains('open');
+  document.querySelectorAll('.week-card.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) card.classList.add('open');
+}
+
+function toggleDay(wNum, day, btn) {
+  const key = `w${wNum}_d${day}`;
+  state.dailyChecks[key] = !state.dailyChecks[key];
+
+  btn.classList.toggle('checked', state.dailyChecks[key]);
+  btn.textContent = '';
+  const days = ['M','T','W','T','F','S','S'];
+  btn.innerHTML = (state.dailyChecks[key] ? '✓' : day) + `<span class="day-label">${days[day-1]}</span>`;
+  btn.classList.add('checkmark-pop');
+  setTimeout(() => btn.classList.remove('checkmark-pop'), 200);
+
+  updateStreak();
+  saveState();
+
+  // update status text
+  const statusEl = document.querySelector(`#week-${wNum} .week-status`);
+  if (statusEl && wNum === state.currentWeek) {
+    statusEl.textContent = `${countChecks(wNum)}/7 days`;
+  }
+  updateStats();
+}
+
+function countChecks(wNum) {
+  let count = 0;
+  for (let d = 1; d <= 7; d++) {
+    if (state.dailyChecks[`w${wNum}_d${d}`]) count++;
+  }
+  return count;
+}
+
+function completeWeek(wNum) {
+  if (!state.completedWeeks.includes(wNum)) {
+    state.completedWeeks.push(wNum);
+  }
+  if (state.currentWeek < 13) state.currentWeek = wNum + 1;
+  if (!state.startDate) state.startDate = new Date().toISOString();
+  saveState();
+  renderWeeks();
+  updateStats();
+
+  // auto-open next week
+  setTimeout(() => {
+    const next = document.getElementById('week-' + (wNum + 1));
+    if (next) {
+      next.classList.add('open');
+      next.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, 300);
+}
+
+function updateProgressRing() {
+  const done = state.completedWeeks.length;
+  const pct = done / 13;
+  const circumference = 201;
+  const offset = circumference - (pct * circumference);
+  document.getElementById('progress-ring').setAttribute('stroke-dashoffset', offset);
+  document.getElementById('ring-num').textContent = done;
+
+  if (done === 0) {
+    document.getElementById('progress-title').textContent = 'Ready to start';
+    document.getElementById('progress-desc').textContent = 'Begin with Week 1 and build one habit at a time.';
+  } else if (done < 13) {
+    document.getElementById('progress-title').textContent = `Week ${state.currentWeek} in progress`;
+    document.getElementById('progress-desc').textContent = `${done} habit${done > 1 ? 's' : ''} locked in. Keep going.`;
+  } else {
+    document.getElementById('progress-title').textContent = 'Program complete!';
+    document.getElementById('progress-desc').textContent = 'All 13 habits are yours now.';
+  }
+  document.getElementById('current-week-badge').textContent = `Week ${state.currentWeek} active`;
+}
+
+// RENDER FOODS
+function renderFoods() {
+  const wrap = document.getElementById('foods-wrap');
+  wrap.innerHTML = '';
+
+  FOODS.forEach((cat, ci) => {
+    const div = document.createElement('div');
+    div.className = 'food-category';
+    div.id = 'cat-' + ci;
+
+    const favedCount = cat.items.filter((_, ii) => state.favFoods[`${ci}_${ii}`]).length;
+
+    div.innerHTML = `
+      <div class="food-cat-head" onclick="toggleCat(${ci})">
+        <span class="food-cat-icon">${cat.icon}</span>
+        <span class="food-cat-name">${cat.name}</span>
+        <span class="food-cat-count">${favedCount > 0 ? favedCount + ' marked' : cat.items.length + ' items'}</span>
+        <span class="food-cat-chevron">›</span>
+      </div>
+      <div class="food-items">
+        ${cat.items.map((item, ii) => {
+          const faved = state.favFoods[`${ci}_${ii}`];
+          return `<div class="food-item ${faved ? 'faved' : ''}" onclick="toggleFood(${ci}, ${ii}, this)">
+            <span class="food-item-name">${item.name}</span>
+            <span class="food-item-note">${item.note}</span>
+            <div class="food-check">${faved ? '✓' : ''}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+    wrap.appendChild(div);
+  });
+}
+
+function toggleCat(ci) {
+  const cat = document.getElementById('cat-' + ci);
+  const isOpen = cat.classList.contains('open');
+  document.querySelectorAll('.food-category.open').forEach(c => c.classList.remove('open'));
+  if (!isOpen) cat.classList.add('open');
+}
+
+function toggleFood(ci, ii, row) {
+  const key = `${ci}_${ii}`;
+  state.favFoods[key] = !state.favFoods[key];
+  row.classList.toggle('faved', state.favFoods[key]);
+  row.querySelector('.food-check').textContent = state.favFoods[key] ? '✓' : '';
+  saveState();
+
+  // update count
+  const cat = FOODS[ci];
+  const favedCount = cat.items.filter((_, i) => state.favFoods[`${ci}_${i}`]).length;
+  const countEl = document.querySelector(`#cat-${ci} .food-cat-count`);
+  if (countEl) countEl.textContent = favedCount > 0 ? favedCount + ' marked' : cat.items.length + ' items';
+
+  updateStats();
+}
+
+// STATS
+function updateStreak() {
+  const today = new Date().toDateString();
+  if (state.lastCheckDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if (state.lastCheckDate === yesterday) {
+    state.streak = (state.streak || 0) + 1;
+  } else if (state.lastCheckDate !== today) {
+    state.streak = 1;
+  }
+  state.lastCheckDate = today;
+}
+
+function updateStats() {
+  const totalChecks = Object.values(state.dailyChecks).filter(Boolean).length;
+  const foodsFaved = Object.values(state.favFoods).filter(Boolean).length;
+  const done = state.completedWeeks.length;
+
+  document.getElementById('stat-streak').textContent = state.streak || 0;
+  document.getElementById('stat-weeks-done').textContent = done;
+  document.getElementById('stat-days-checked').textContent = totalChecks;
+  document.getElementById('stat-foods-faved').textContent = foodsFaved;
+  document.getElementById('stat-weeks-left').textContent = 13 - done;
+}
+
+function confirmReset() {
+  if (confirm('Reset all progress? This cannot be undone.')) {
+    localStorage.removeItem('leptin_state');
+    state = defaultState();
+    renderWeeks();
+    renderFoods();
+    updateStats();
+  }
+}
+
+// NAV
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+}
+
+// INIT
+renderWeeks();
+renderFoods();
+updateStats();
+</script>
+</body>
+</html>
